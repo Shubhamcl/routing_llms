@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  router-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base  # Use 'gpu-base' for GPU support
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - WORKERS=1
+      - MODEL_PATH=/app/runs
+      - CONFIG_PATH=/app/config.json
+    volumes:
+      # Mount your model directory
+      - ./runs:/app/runs:ro
+      # Mount config file if you have one
+      - ./config.json:/app/config.json:ro
+      # Mount data directory for any additional files
+      - ./data:/app/data:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    
+  # GPU variant (uncomment if you need GPU support)
+  # router-api-gpu:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #     target: gpu-base
+  #   ports:
+  #     - "8000:8000"
+  #   environment:
+  #     - HOST=0.0.0.0
+  #     - PORT=8000
+  #     - WORKERS=1
+  #     - MODEL_PATH=/app/runs
+  #     - CONFIG_PATH=/app/config.json
+  #   volumes:
+  #     - ./runs:/app/runs:ro
+  #     - ./config.json:/app/config.json:ro
+  #     - ./data:/app/data:ro
+  #   runtime: nvidia
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=all
+  #   restart: unless-stopped
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #     start_period: 60s
+
+networks:
+  default:
+    name: router-network
