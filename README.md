@@ -44,6 +44,7 @@ The system implements three routing approaches:
 - Dockerfile and docker-composed included
 - Cancelled plans to host API on EC2
 - Not sure when this was gonna be tested
+- API docs can be viewed at localhost:8000/docs
 
 ## Installation
 
@@ -115,7 +116,7 @@ curl -X POST "http://localhost:8000/predict/batch" \
 curl http://localhost:8000/health
 ```
 
-## 📚 API Documentation
+## API Documentation
 
 ### Endpoints
 
